@@ -6,6 +6,25 @@
  this is a typingclub.com clone which uses champion and item data from the
  riot API.
 
+ 0. start with the template project
+ 1. console log a list of hero names from champion.json
+ 2. console log some info from a specific champion
+ 3. obtain a list of abilities from any hero
+ 4. obtain a list of lists of hero abilities
+ 5. make a typerc passage work with a champion.json 'blurb'
+ 6. fetch a few champion images
+ 7. fetch ability images from the multi-dimensional array
+
+ 8. tinker with the items.json page
+ 9. display icon images
+
+ draw diagram with rudimentary layout
+
+ enable passage.js to handle multiple sections: 'nextSection()' 🦔 Cody suggests new object.
+
+ filter tags out of abilities
+ color or format specific xml tags
+
 */
 
 let font
@@ -18,8 +37,8 @@ let incorrectSound /* audio cue for typing one char incorrectly */
 let initialChampionQueryJSON /* json file from scryfall: set=snc */
 let championData /* the 'data' field of a JSON query from api.scryfall */
 let cardImg
-let currentCardIndex
-let cards /* packed up JSON data */
+let currentHeroIndex
+let heroes /* packed up JSON data */
 
 const FONT_SIZE = 32
 
@@ -60,17 +79,23 @@ function setup() {
     console.log(championData)
     passage = new Passage("this is a test sentence.\n ")
 
-    processChampionData()
+    processHeroData()
 }
 
 
-function processChampionData() {
+function processHeroData() {
     for (const index in championData) {
         console.log(`${championData[index]['name']}`)
     }
 
     console.log(championData)
     console.log(`champion data → ${championData}`)
+}
+
+
+/** create the data structure for storing hero abilities */
+function gotHeroData(data) {
+
 }
 
 
@@ -206,20 +231,20 @@ function keyPressed() {
         instructions.html(`<pre>
             sketch stopped</pre>`)
     } else if (keyCode === 100) { /* numpad 4 */
-        currentCardIndex--
+        currentHeroIndex--
         updateCard()
     } else if (keyCode === 102) { /* numpad 6 */
-        currentCardIndex++
+        currentHeroIndex++
         updateCard()
     } else if (keyCode === 104) { /* numpad 8 */
-        currentCardIndex += 10
+        currentHeroIndex += 10
         updateCard()
     } else if (keyCode === 98) { /* numpad 2 */
-        currentCardIndex -= 10
+        currentHeroIndex -= 10
         updateCard()
     } else if (keyCode === 101) { /* numpad 5 */
-        currentCardIndex = int(random(0, cards.length))
-        console.log(currentCardIndex)
+        currentHeroIndex = int(random(0, heroes.length))
+        console.log(currentHeroIndex)
         updateCard()
     } else {
         /* temporary hack for handling enter key */
@@ -247,10 +272,10 @@ function keyPressed() {
 /** selects a new card based on the currentCardIndex; displays its image and
  associated typing passage */
 function updateCard() {
-    currentCardIndex = constrain(currentCardIndex, 0, cards.length-1)
-    passage = new Passage(cards[currentCardIndex].typeText)
-    cardImg = loadImage(cards[currentCardIndex].png_uri)
-    console.log(cards[currentCardIndex].typeText)
+    currentHeroIndex = constrain(currentHeroIndex, 0, heroes.length-1)
+    passage = new Passage(heroes[currentHeroIndex].typeText)
+    cardImg = loadImage(heroes[currentHeroIndex].png_uri)
+    console.log(heroes[currentHeroIndex].typeText)
 }
 
 
@@ -264,8 +289,8 @@ function updateCard() {
  */
 function processTypedKey(k) {
     if (passage.finished()) {
-        currentCardIndex = int(random(0, cards.length))
-        console.log(currentCardIndex)
+        currentHeroIndex = int(random(0, heroes.length))
+        console.log(currentHeroIndex)
         // updateCard()
     }
     else if (passage.getCurrentChar() === k) {
