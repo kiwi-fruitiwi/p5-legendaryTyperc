@@ -13,7 +13,7 @@
  4. obtain a list of lists of hero abilities
  5. make a typerc passage work with a champion.json 'blurb'
  6. fetch a few champion images
- 7. fetch ability images from the multi-dimensional array
+ 7. fetch ability images from the multidimensional array
 
  8. tinker with the items.json page
  9. display icon images
@@ -36,8 +36,8 @@ let incorrectSound /* audio cue for typing one char incorrectly */
 
 let initialChampionQueryJSON /* json file from scryfall: set=snc */
 let championData /* the 'data' field of a JSON query from api.scryfall */
-let cardImg
-let currentHeroIndex
+let championImg
+let championIndex
 let heroes /* packed up JSON data */
 
 const FONT_SIZE = 32
@@ -76,7 +76,6 @@ function setup() {
     incorrectSound = loadSound('data/incorrect.wav')
 
     championData = initialChampionQueryJSON['data']
-    console.log(championData)
     passage = new Passage("this is a test sentence.\n ")
 
     processHeroData()
@@ -84,12 +83,42 @@ function setup() {
 
 
 function processHeroData() {
+    /** build hero data object: name, blurb  */
     for (const index in championData) {
         console.log(`${championData[index]['name']}`)
     }
 
-    console.log(championData)
-    console.log(`champion data → ${championData}`)
+    console.log(initialChampionQueryJSON)
+    console.log(`championData.length → ${championData.length}`) /* ❓ undef */
+
+    const championCount = Object.keys(championData).length
+    console.log(`championData.keys len → ${championCount}`)
+    console.log(`championData.keys → ${Object.keys(championData)}`)
+
+    /* test randomized hero indices */
+    const randomHeroIndex = int(random(0, championCount))
+    // console.log(randomHeroIndex)
+    const champion = championData[randomHeroIndex]
+    // console.log(`${champion['name']}, ${champion['title']}`)
+    // console.log(`championData[randomHeroIndex] → ${champion}`)
+
+    const randomChampion = Object.keys(championData)[randomHeroIndex]
+    console.log(randomChampion)
+    console.log(`Object.keys(championData)[randomHeroIndex] → ${randomChampion}`)
+
+    /** load a champion and display their blurb */
+    const c = championData[randomChampion]
+    const passageText = `${c['name']} ${c['title']}\n${c['blurb']}`
+    passage = new Passage(passageText + '\n ')
+
+    /** grab image using loadImage → global currentChampionImg
+     *  in draw: render it if (currentChampionImg) ← seems unnecessary */
+
+    /** once we select a champion name, we can query for the champion's
+     *  individual json! we can then grab the value of the 'lore' key from
+     *  that page
+     */
+    /* load a champion and display their abilities */
 }
 
 
@@ -231,20 +260,20 @@ function keyPressed() {
         instructions.html(`<pre>
             sketch stopped</pre>`)
     } else if (keyCode === 100) { /* numpad 4 */
-        currentHeroIndex--
+        championIndex--
         updateCard()
     } else if (keyCode === 102) { /* numpad 6 */
-        currentHeroIndex++
+        championIndex++
         updateCard()
     } else if (keyCode === 104) { /* numpad 8 */
-        currentHeroIndex += 10
+        championIndex += 10
         updateCard()
     } else if (keyCode === 98) { /* numpad 2 */
-        currentHeroIndex -= 10
+        championIndex -= 10
         updateCard()
     } else if (keyCode === 101) { /* numpad 5 */
-        currentHeroIndex = int(random(0, heroes.length))
-        console.log(currentHeroIndex)
+        championIndex = int(random(0, heroes.length))
+        console.log(championIndex)
         updateCard()
     } else {
         /* temporary hack for handling enter key */
@@ -272,10 +301,10 @@ function keyPressed() {
 /** selects a new card based on the currentCardIndex; displays its image and
  associated typing passage */
 function updateCard() {
-    currentHeroIndex = constrain(currentHeroIndex, 0, heroes.length-1)
-    passage = new Passage(heroes[currentHeroIndex].typeText)
-    cardImg = loadImage(heroes[currentHeroIndex].png_uri)
-    console.log(heroes[currentHeroIndex].typeText)
+    championIndex = constrain(championIndex, 0, heroes.length-1)
+    passage = new Passage(heroes[championIndex].typeText)
+    championImg = loadImage(heroes[championIndex].png_uri)
+    console.log(heroes[championIndex].typeText)
 }
 
 
@@ -289,8 +318,8 @@ function updateCard() {
  */
 function processTypedKey(k) {
     if (passage.finished()) {
-        currentHeroIndex = int(random(0, heroes.length))
-        console.log(currentHeroIndex)
+        championIndex = int(random(0, heroes.length))
+        console.log(championIndex)
         // updateCard()
     }
     else if (passage.getCurrentChar() === k) {
