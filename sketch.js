@@ -25,6 +25,52 @@
  filter tags out of abilities
  color or format specific xml tags
 
+
+ important documentation :p https://developer.riotgames.com/docs/lol
+
+ official league of legends champion page
+    https://www.leagueoflegends.com/en-us/champions/ahri/
+    ability 📹 riot API doesn't seem to serve this info
+ https://d28xe8vt774jo5.cloudfront.net/champion-abilities/0103/ability_0103_P1.webm
+
+ league fandom wiki
+    https://leagueoflegends.fandom.com/wiki/Ahri/LoL
+    ability 📹
+        https://static.wikia.nocookie.net/leagueoflegends/images/c/cd/Ahri_IVideo.webm
+
+ skin splash screens
+    The number at the end of the filename corresponds to the skin number.
+    https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Ahri_2.jpg
+    https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Nunu_0.jpg
+    ↑ note that _0 is always the default splash image
+
+         "skins": [
+         {
+              "id": "20000",
+              "num": 0,
+              "name": "default",
+              "chromas": false
+         },
+         {
+              "id": "20001",
+              "num": 1,
+              "name": "Sasquatch Nunu & Willump",
+              "chromas": false
+            },
+        ...
+        ]
+
+ sprite small profile squares
+    https://ddragon.leagueoflegends.com/cdn/12.12.1/img/sprite/champion2.png
+
+ champion icons
+    https://ddragon.leagueoflegends.com/cdn/12.12.1/img/champion/Nunu.png
+
+ passive icons
+    https://ddragon.leagueoflegends.com/cdn/12.12.1/img/passive/Ahri_SoulEater2.png
+
+ ability icons
+     https://ddragon.leagueoflegends.com/cdn/12.12.1/img/spell/AhriSeduce.png
 */
 
 let font
@@ -36,6 +82,7 @@ let incorrectSound /* audio cue for typing one char incorrectly */
 
 let initialChampionQueryJSON /* json file from scryfall: set=snc */
 let championData /* the 'data' field of a JSON query from api.scryfall */
+let baseImgURI = "https://ddragon.leagueoflegends.com/cdn/12.12.1/img/champion/"
 let championImg
 let championIndex
 let heroes /* packed up JSON data */
