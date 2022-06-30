@@ -9,6 +9,7 @@
  0. start with the template project
  1. console log a list of hero names from champion.json
  2. console log some info from a specific champion
+
  3. obtain a list of abilities from any hero
  4. obtain a list of lists of hero abilities
  5. make a typerc passage work with a champion.json 'blurb'
@@ -82,7 +83,11 @@ let incorrectSound /* audio cue for typing one char incorrectly */
 
 let initialChampionQueryJSON /* json file from scryfall: set=snc */
 let championData /* the 'data' field of a JSON query from api.scryfall */
-let baseImgURI = "https://ddragon.leagueoflegends.com/cdn/12.12.1/img/champion/"
+
+const baseURI = "https://ddragon.leagueoflegends.com/"
+const imgURI = baseURI + "cdn/12.12.1/img/champion/"
+const splashURI = baseURI + "cdn/img/champion/splash/"
+
 let championImg
 let championIndex
 let heroes /* packed up JSON data */
@@ -160,6 +165,9 @@ function processHeroData() {
 
     /** grab image using loadImage → global currentChampionImg
      *  in draw: render it if (currentChampionImg) ← seems unnecessary */
+    const splash = splashURI + c['name'] + '_0.jpg'
+
+    championImg = loadImage(splash)
 
     /** once we select a champion name, we can query for the champion's
      *  individual json! we can then grab the value of the 'lore' key from
@@ -189,7 +197,7 @@ function draw() {
     // passage.displayRowMarkers(5)
 
     const IMG_WIDTH = 340
-    // cardImg.resize(IMG_WIDTH, 0)
+    championImg.resize(IMG_WIDTH, 0)
     tint(0, 0, 100)
 
     dc.shadowBlur = 24
@@ -199,8 +207,7 @@ function draw() {
     const vPadding = passage.TOP_MARGIN
     let jitter = 0 /*sin(frameCount / 30) * 15*/
 
-    /* 626x457 */
-    // image(cardImg, width-IMG_WIDTH-hPadding+jitter, vPadding/2 + 20)
+    image(championImg, width-IMG_WIDTH-hPadding+jitter, vPadding/2 + 20)
     resetDcShadow()
 
     /* debugCorner needs to be last so its z-index is highest */
