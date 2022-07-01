@@ -83,11 +83,14 @@ let incorrectSound /* audio cue for typing one char incorrectly */
 
 let initialChampionQueryJSON /* json file from scryfall: set=snc */
 let championData /* the 'data' field of a JSON query from api.scryfall */
+let heroSpecificData /* heroID.json as opposed to champion.json */
+
+/* global for ID of currently displayed champion */
+let targetedChampionID
 
 const baseURI = "https://ddragon.leagueoflegends.com/"
-const imgURI = baseURI + "cdn/12.12.1/img/champion/"
+const championURI = baseURI + "cdn/12.12.1/data/en_US/champion/"
 const splashURI = baseURI + "cdn/img/champion/splash/"
-
 let championImg
 let championIndex
 let heroes /* packed up JSON data */
@@ -164,9 +167,9 @@ function processHeroData() {
     passage = new Passage(passageText + '\n ')
 
     /** grab image using loadImage → global currentChampionImg
-     *  in draw: render it if (currentChampionImg) ← seems unnecessary */
-    const splash = splashURI + c['name'] + '_0.jpg'
-
+     *  in draw: render it! don't need to check if (ChampionImg)
+     */
+    const splash = splashURI + c['id'] + '_0.jpg'
     championImg = loadImage(splash)
 
     /** once we select a champion name, we can query for the champion's
@@ -174,12 +177,27 @@ function processHeroData() {
      *  that page
      */
     /* load a champion and display their abilities */
+    targetedChampionID = c['id']
+    let id = targetedChampionID
+    const targetedJSON = championURI + id + '.json'
+    /* https://ddragon.leagueoflegends.com/cdn/12.12.1/data/en_US/
+    champion/Nunu.json */
+    console.log(`championURI: ${targetedJSON}`)
+    loadJSON(targetedJSON, gotHeroData)
 }
 
 
 /** create the data structure for storing hero abilities */
 function gotHeroData(data) {
+    let skinData = data['data'][targetedChampionID]['skins']
+    console.log(skinData)
 
+    for (const skin of skinData) {
+        console.log(`${skin['num']}: ${skin['name']}`)
+        console.log(`URI→ ${splashURI}${targetedChampionID}_${skin['num']}.jpg`)
+    }
+
+    console.log(data['data'][targetedChampionID]['enemytips'])
 }
 
 
