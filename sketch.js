@@ -91,6 +91,8 @@ let targetedChampionID
 const baseURI = "https://ddragon.leagueoflegends.com/"
 const championURI = baseURI + "cdn/12.12.1/data/en_US/champion/"
 const splashURI = baseURI + "cdn/img/champion/splash/"
+
+let backgroundImg
 let championImg
 let championIndex
 let heroes /* packed up JSON data */
@@ -139,16 +141,12 @@ function setup() {
 
 function processHeroData() {
     /** build hero data object: name, blurb  */
-    for (const index in championData) {
-        console.log(`${championData[index]['name']}`)
-    }
-
-    console.log(initialChampionQueryJSON)
-    console.log(`championData.length → ${championData.length}`) /* ❓ undef */
+    // console.log(initialChampionQueryJSON)
+    // console.log(`championData.length → ${championData.length}`) /* ❓ undef */
 
     const championCount = Object.keys(championData).length
     console.log(`championData.keys len → ${championCount}`)
-    console.log(`championData.keys → ${Object.keys(championData)}`)
+    // console.log(`championData.keys → ${Object.keys(championData)}`)
 
     /* test randomized hero indices */
     const randomHeroIndex = int(random(0, championCount))
@@ -158,11 +156,15 @@ function processHeroData() {
     // console.log(`championData[randomHeroIndex] → ${champion}`)
 
     const randomChampion = Object.keys(championData)[randomHeroIndex]
-    console.log(randomChampion)
+    // console.log(randomChampion)
     console.log(`Object.keys(championData)[randomHeroIndex] → ${randomChampion}`)
 
     /** load a champion and display their blurb */
+
+
     const c = championData[randomChampion]
+    // let c = championData['Gwen']
+
     const passageText = `${c['name']} ${c['title']}\n${c['blurb']}`
     passage = new Passage(passageText + '\n ')
 
@@ -178,12 +180,30 @@ function processHeroData() {
      */
     /* load a champion and display their abilities */
     targetedChampionID = c['id']
+
     let id = targetedChampionID
     const targetedJSON = championURI + id + '.json'
     /* https://ddragon.leagueoflegends.com/cdn/12.12.1/data/en_US/
     champion/Nunu.json */
     console.log(`championURI: ${targetedJSON}`)
     loadJSON(targetedJSON, gotHeroData)
+}
+
+
+function downloadAbilityVideo() {
+    /*
+        every champion has a numerical id: nunu is 20 while ashe is 22
+
+        https://d28xe8vt774jo5.cloudfront.net/
+        champion-abilities/0022/ability_0022_P1.webm
+
+        we can download these files all at once because they follow this format:
+
+        root = 'd28xe8vt774jo5.cloudfront.net/champion-abilities/'
+        id = four letter zero-filled string
+        ability = 'ability_' + id + '_' + abilityLetter + '1.webm'
+
+     */
 }
 
 
@@ -197,7 +217,6 @@ function gotHeroData(data) {
         console.log(`URI→ ${splashURI}${targetedChampionID}_${skin['num']}.jpg`)
     }
 
-    console.log(data['data'][targetedChampionID]['enemytips'])
 }
 
 
