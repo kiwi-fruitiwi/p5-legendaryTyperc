@@ -99,6 +99,8 @@ let heroes /* packed up JSON data */
 
 const FONT_SIZE = 32
 
+let testArrID /* noodling to see what everyone's IDs are lol */
+
 let dc
 let milk /* used for champion portrait glow */
 let lastRequestTime = 0
@@ -135,7 +137,26 @@ function setup() {
     championData = initialChampionQueryJSON['data']
     passage = new Passage("this is a test sentence.\n ")
 
-    processHeroData()
+    /* look through champion.json, print out IDs */
+    const testArrChampionKeys = []
+    for (const index in championData) {
+        console.log(int(championData[index]['key']))
+        testArrChampionKeys.push(int(championData[index]['key']))
+    }
+
+    console.log(`champions: ${testArrChampionKeys.length}`)
+    console.log(`${testArrChampionKeys.sort((a, b) => {
+        if (a < b) {
+            return -1;
+        }
+        if (a > b) {
+            return 1;
+        }
+        // a must be equal to b
+        return 0;
+    })}`)
+
+    // processHeroData()
 }
 
 
@@ -200,9 +221,14 @@ function downloadAbilityVideo() {
         we can download these files all at once because they follow this format:
 
         root = 'd28xe8vt774jo5.cloudfront.net/champion-abilities/'
-        id = four letter zero-filled string
-        ability = 'ability_' + id + '_' + abilityLetter + '1.webm'
+        key = four letter zero-filled string
+        ability = 'ability_' + key + '_' + abilityLetter + '1.webm'
 
+        ☐ goal: nunuP.webm, nunuW, nunuE, nunuR
+            champion['id'] + abilityLetter + '.webm' to save
+            play it once when you start typing
+
+        ☐ grab one video via
      */
 }
 
@@ -228,24 +254,24 @@ function resetDcShadow() {
 
 
 function draw() {
-    background(passage.cBackground)
-
-    passage.render()
-    // passage.displayRowMarkers(5)
-
-    const IMG_WIDTH = 340
-    championImg.resize(IMG_WIDTH, 0)
-    tint(0, 0, 100)
-
-    dc.shadowBlur = 24
-    dc.shadowColor = milk
-
-    const hPadding = passage.LEFT_MARGIN/2
-    const vPadding = passage.TOP_MARGIN
-    let jitter = 0 /*sin(frameCount / 30) * 15*/
-
-    image(championImg, width-IMG_WIDTH-hPadding+jitter, vPadding/2 + 20)
-    resetDcShadow()
+    // background(passage.cBackground)
+    //
+    // passage.render()
+    // // passage.displayRowMarkers(5)
+    //
+    // const IMG_WIDTH = 340
+    // championImg.resize(IMG_WIDTH, 0)
+    // tint(0, 0, 100)
+    //
+    // dc.shadowBlur = 24
+    // dc.shadowColor = milk
+    //
+    // const hPadding = passage.LEFT_MARGIN/2
+    // const vPadding = passage.TOP_MARGIN
+    // let jitter = 0 /*sin(frameCount / 30) * 15*/
+    //
+    // image(championImg, width-IMG_WIDTH-hPadding+jitter, vPadding/2 + 20)
+    // resetDcShadow()
 
     /* debugCorner needs to be last so its z-index is highest */
     // debugCorner.setText(`frameCount: ${frameCount}`, 4)
