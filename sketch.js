@@ -140,12 +140,12 @@ function setup() {
     /* look through champion.json, print out IDs */
     const testArrChampionKeys = []
     for (const index in championData) {
-        console.log(int(championData[index]['key']))
+        // console.log(int(championData[index]['key']))
         testArrChampionKeys.push(int(championData[index]['key']))
     }
 
     console.log(`champions: ${testArrChampionKeys.length}`)
-    console.log(`${testArrChampionKeys.sort((a, b) => {
+    testArrChampionKeys.sort((a, b) => {
         if (a < b) {
             return -1;
         }
@@ -154,9 +154,9 @@ function setup() {
         }
         // a must be equal to b
         return 0;
-    })}`)
+    })
 
-    // processHeroData()
+    processHeroData()
 }
 
 
@@ -183,8 +183,8 @@ function processHeroData() {
     /** load a champion and display their blurb */
 
 
-    const c = championData[randomChampion]
-    // let c = championData['Gwen']
+    // const c = championData[randomChampion]
+    let c = championData['Lux']
 
     const passageText = `${c['name']} ${c['title']}\n${c['blurb']}`
     passage = new Passage(passageText + '\n ')
