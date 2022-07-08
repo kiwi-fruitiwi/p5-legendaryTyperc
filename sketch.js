@@ -3,6 +3,9 @@
  @author kiwi
  @date 2022.06.26
 
+ ☐ clean up duplicate values for champion data
+ ☐ create local champions array; populate with relevant info like currentCard
+
  this is a typingclub.com clone which uses champion and item data from the
  riot API.
 
@@ -82,7 +85,7 @@ let correctSound /* audio cue for typing one char correctly */
 let incorrectSound /* audio cue for typing one char incorrectly */
 
 let initialChampionQueryJSON /* json file from scryfall: set=snc */
-let championData /* the 'data' field of a JSON query from api.scryfall */
+let championData /* the 'data' field of a JSON query from champion.json */
 let heroSpecificData /* heroID.json as opposed to champion.json */
 
 /* global for ID of currently displayed champion */
@@ -94,8 +97,9 @@ const splashURI = baseURI + "cdn/img/champion/splash/"
 
 let backgroundImg
 let championImg
+let currentChampion
 let championIndex
-let heroes /* packed up JSON data */
+let heroes /* packed up JSON data. not used */
 
 const FONT_SIZE = 32
 
@@ -172,19 +176,20 @@ function processHeroData() {
     /* test randomized hero indices */
     const randomHeroIndex = int(random(0, championCount))
     // console.log(randomHeroIndex)
-    const champion = championData[randomHeroIndex]
+    // const champion = championData[randomHeroIndex]
     // console.log(`${champion['name']}, ${champion['title']}`)
     // console.log(`championData[randomHeroIndex] → ${champion}`)
 
     const randomChampion = Object.keys(championData)[randomHeroIndex]
-    // console.log(randomChampion)
+    championIndex = randomHeroIndex
     console.log(`Object.keys(championData)[randomHeroIndex] → ${randomChampion}`)
 
     /** load a champion and display their blurb */
 
 
-    // const c = championData[randomChampion]
-    let c = championData['Lux']
+    const c = championData[randomChampion]
+    currentChampion = c
+    // let c = championData['Lux']
 
     const passageText = `${c['name']} ${c['title']}\n${c['blurb']}`
     passage = new Passage(passageText + '\n ')
@@ -243,6 +248,8 @@ function gotHeroData(data) {
         console.log(`URI→ ${splashURI}${targetedChampionID}_${skin['num']}.jpg`)
     }
 
+    const splash = splashURI + currentChampion['id'] + '_0.jpg'
+    championImg = loadImage(splash)
 }
 
 
@@ -254,29 +261,34 @@ function resetDcShadow() {
 
 
 function draw() {
-    // background(passage.cBackground)
-    //
-    // passage.render()
-    // // passage.displayRowMarkers(5)
-    //
-    // const IMG_WIDTH = 340
-    // championImg.resize(IMG_WIDTH, 0)
-    // tint(0, 0, 100)
-    //
-    // dc.shadowBlur = 24
-    // dc.shadowColor = milk
-    //
-    // const hPadding = passage.LEFT_MARGIN/2
-    // const vPadding = passage.TOP_MARGIN
-    // let jitter = 0 /*sin(frameCount / 30) * 15*/
-    //
-    // image(championImg, width-IMG_WIDTH-hPadding+jitter, vPadding/2 + 20)
-    // resetDcShadow()
+    background(passage.cBackground)
+
+    passage.render()
+    // passage.displayRowMarkers(5)
+
+    const IMG_WIDTH = 340
+    championImg.resize(IMG_WIDTH, 0)
+    tint(0, 0, 100)
+
+    dc.shadowBlur = 24
+    dc.shadowColor = milk
+
+    const hPadding = passage.LEFT_MARGIN/2
+    const vPadding = passage.TOP_MARGIN
+    let jitter = 0 /*sin(frameCount / 30) * 15*/
+
+    image(championImg, width-IMG_WIDTH-hPadding+jitter, vPadding/2 + 20)
+    resetDcShadow()
 
     /* debugCorner needs to be last so its z-index is highest */
-    // debugCorner.setText(`frameCount: ${frameCount}`, 4)
-    // debugCorner.setText(`set id: ${currentCardIndex} of ${cards.length}`, 3)
-    // debugCorner.show()
+    debugCorner.setText(`frameCount: ${frameCount}`, 4)
+
+    const numChampions = Object.keys(championData).length
+    debugCorner.setText(`set id: ${championIndex} of ${numChampions}`, 3)
+    debugCorner.show()
+
+    if (frameCount >= 3000)
+        noLoop()
 }
 
 
@@ -418,7 +430,8 @@ function keyPressed() {
 /** selects a new card based on the currentCardIndex; displays its image and
  associated typing passage */
 function updateCard() {
-    championIndex = constrain(championIndex, 0, heroes.length-1)
+    const numChampions = Object.keys(championData).length
+    championIndex = constrain(championIndex, 0, numChampions-1)
     passage = new Passage(heroes[championIndex].typeText)
     championImg = loadImage(heroes[championIndex].png_uri)
     console.log(heroes[championIndex].typeText)
